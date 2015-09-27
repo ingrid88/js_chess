@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chess</title>
+    <link rel="stylesheet" type"text/css" href="../css/chess.css">
+  </head>
+
+  <body>
+    <h1>Chess</h1>
+
+    <figure class="chess-game">
+
+
+      7 ║♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
+      8 ║♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
+      1 ║♖ … ♗ ♕ ♔ ♗ ♘ ♖
+      2 ║♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
+
+    </figure>
+
+
+    <figcaption class="clearfix">
+      click piece, then click destination.
+    </figcaption>
+    <button class="new-game">New Game</button>
+
+    <script src="../js/jquery-1.9.1.js"></script>
+    <script src="../js/chess.js"></script>
+    <script src="../js/board.js"></script>
+    <script src="../js/piece.js"></script>
+
+    <script>
+      $(function(){
+        new CH.View($(".chess-game"));
+      });
+      $(".new-game").click(function(){
+        $(".chess-game ul").remove();
+        new CH.View($(".chess-game"));
+      })
+    </script>
+  </body>
+</html>
