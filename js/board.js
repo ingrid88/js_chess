@@ -14,6 +14,8 @@
   CH.Rook = [[1,0],[-1,0],[0,1],[0,-1]];
   CH.BoardSize = 8;
 
+  // player classes and piece classes?
+
   // We need history.
   // 1. Either board knows who moved and piece knows where it moved
   // 2. Or, Board knows who moved where.
@@ -27,9 +29,8 @@
 
   Board = CH.Board = function (){
     this.grid();
-    this.generateMinePositions();
     this.populateBoard();
-  }
+  };
 
   Board.prototype.grid = function(){
     this.grid = [];
@@ -53,11 +54,7 @@
   Board.prototype.populateBoard = function(){
     for (var i = 0; i < CH.BoardSize; i++){
       for (var j = 0; j < CH.BoardSize; j++){
-        has_bomb = false
-        if (this.minePositions.includes([i,j])) {
-          has_bomb = true;
-        };
-        this.grid[i][j] = new CH.Piece(location, color);
+        this.grid[i][j] = new CH.Piece(board, color, type);
       }
     }
   };
