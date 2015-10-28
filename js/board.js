@@ -231,12 +231,13 @@
   Board.prototype.queenMe = function(piece, endup){
     // if pawn has reached other side of board, turn it into a queen
     // white has to reach [x,7], black has to reach [x,0]
+    debugger
     if((endup[0] === 0 && piece.color === "black")
     || ( endup[0] === 7 && piece.color === "white")){
       var color = piece.color;
       var type = "Queen";
       var position = endup;
-      var i = piece.color === "black" ? 0 : 1;
+      var i = piece.color === "black" ? 1 : 0;
       var image = CH.Pieces[type][i];
       this.grid[endup[0]][endup[1]] = new Piece(color, type, position, image);
     }
@@ -457,7 +458,7 @@
     this.grid[endup[0]][endup[1]] = piece;
     this.grid[begin[0]][begin[1]] = [];
     if (piece.type === "Pawn" && (endup[0] === 7 || endup[0] === 0)){
-      this.QueenMe(piece, endup);
+      this.queenMe(piece, endup);
     }
     debugger
     if (piece.type === "King" && Math.abs(begin[1] - endup[1]) > 1){
