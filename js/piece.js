@@ -39,7 +39,8 @@
     this.color = color;
     this.type = type;
     this.position = position;
-    this.image = image
+    this.image = image;
+    this.moved = false
   };
 
   //Colors

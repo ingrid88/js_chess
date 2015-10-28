@@ -133,16 +133,16 @@
     // Or, no other piece can inhibit check
   };
 
-  View.prototype.kingHistory = function(){
-    var history = this.history();
-    for(var i = 0; i < history.length; i++){
-      var piece = this.board.grid[0][3];
-      if(piece.type !== "King"){
-        return false
-      }
-    }
-    return true
-  };
+  // View.prototype.kingHistory = function(){
+  //   var history = this.history();
+  //   for(var i = 0; i < history.length; i++){
+  //     var piece = this.board.grid[0][3];
+  //     if(piece.type !== "King"){
+  //       return false
+  //     }
+  //   }
+  //   return true
+  // };
 
   View.prototype.history = function(){
     var grid = jQuery.extend(true, {}, this.board.grid);

@@ -97,7 +97,7 @@
   };
 
   Board.prototype.hasPiece = function(pos){
-    debugger
+    //debugger
     if (this.grid[pos[0]][pos[1]].length === 0){
       return false
     }
@@ -137,18 +137,111 @@
         return true
       }
     }
-
     return false
 
   };
 
-  Board.prototype.enPassant = function(){
-    // if king and rook have not moved
-
-    // nothing is between king and rook
-    // king has been moved from 0,3 to 0,1 or 0,5 ---> white
+  Board.prototype.enPassant = function(piece, begin, endup){
 
   };
+
+  Board.prototype.castle = function(piece, begin, endup){
+     // Castling may only be done if the king has never moved,
+     // the rook involved has never moved,
+     // the squares between the king and the rook involved are unoccupied
+     // cannot be done when in check
+     //debugger
+     if(begin[1] > endup[1]){
+       //kingside move
+       var dir = -1;
+       var rookPos = 0;
+     } else {
+       //queenside move
+       var dir = 1;
+       var rookPos = 7;
+     }
+
+    var king = piece;
+    if (king.color === "white") {
+      var rook = this.grid[0][rookPos];
+      var kingPos = [0, 3];
+    } else {
+      var rook = this.grid[7][rookPos];
+      var kingPos = [7, 3]
+    }
+    // var rook = this.grid[0][7]
+
+    var pos1 = [begin[0], begin[1] + dir * 1];
+    var pos2 = [begin[0], begin[1] + dir * 2];
+    // queen side only
+    var pos3 = [begin[0], begin[1] + dir * 3];
+
+    if (begin[0] === endup[0] && begin[1] + dir * 2 === endup[1] &&
+    begin[0] === kingPos[0] && begin[1] === kingPos[1] &&
+    !this.hasPiece(pos1) && !this.hasPiece(pos2)
+    && king.moved === false && rook.moved === false) {
+      if(dir === 1){
+        if(!this.hasPiece(pos3)){
+          return true
+        }
+      } else {
+        return true
+      }
+    }
+    return false
+  };
+
+  Board.prototype.castleMove = function(piece, begin, endup){
+    // move the rook on appropriate side
+    debugger
+    if(begin[1] > endup[1]){
+      //kingside move
+      var dir = -1;
+      var rookPos = 0;
+      var rookNewY = 2;
+    } else {
+      //queenside move
+      var dir = 1;
+      var rookPos = 7;
+      var rookNewY = 4;
+    }
+
+    var king = piece;
+    if (king.color === "white") {
+      var rook = this.grid[0][rookPos];
+      var rookOldPos = [0, rookPos];
+      var rookNewX = 0;
+      var kingPos = [0, 3];
+    } else {
+      var rook = this.grid[7][rookPos];
+      var rookNewX = 7;
+      var rookOldPos = [7, rookPos];
+      var kingPos = [7, 3];
+    }
+
+    //var rookPos = rook.position;
+    rook.moved = true;
+    var rookNewPos = [rookNewX, rookNewY];
+    this.grid[rookNewPos[0]][rookNewPos[1]] = rook;
+    this.grid[rookOldPos[0]][rookOldPos[1]] = [];
+    rook.position = rookNewPos;
+
+  };
+
+  Board.prototype.queenMe = function(piece, endup){
+    // if pawn has reached other side of board, turn it into a queen
+    // white has to reach [x,7], black has to reach [x,0]
+    if((endup[0] === 0 && piece.color === "black")
+    || ( endup[0] === 7 && piece.color === "white")){
+      var color = piece.color;
+      var type = "Queen";
+      var position = endup;
+      var i = piece.color === "black" ? 0 : 1;
+      var image = CH.Pieces[type][i];
+      this.grid[endup[0]][endup[1]] = new Piece(color, type, position, image);
+    }
+  };
+
 
   Board.prototype.pawnKill = function(begin, endup, piece){
     var deltas = CH.Moves[piece.type];
@@ -196,7 +289,12 @@
       return this.knightLogic(piece, begin, endup)
     }
     if(piece.type === "King"){
-      return this.kingMove(piece, begin, endup)
+      debugger
+      var castle = this.castle(piece, begin, endup);
+      var kingmove = this.kingMove(piece, begin, endup);
+      if (castle || kingmove){
+        return true
+      }
     }
     if(piece.type === "Queen" || piece.type === "Rook" || piece.type === "Bishop"){
       // Which direction is he traveling in?
@@ -222,6 +320,9 @@
         endup[1] - begin[1] === deltas[i][1]){
           return true
         }
+      }
+      if (this.castle(piece, begin, endup)){
+        return true
       }
     }
     return false
@@ -351,10 +452,17 @@
     var begin = this.vertexPos(start);
     var endup = this.vertexPos(moveto);
     var piece = this.grid[begin[0]][begin[1]];
-
+    piece.moved = true;
     piece.position = endup;
     this.grid[endup[0]][endup[1]] = piece;
     this.grid[begin[0]][begin[1]] = [];
+    if (piece.type === "Pawn" && (endup[0] === 7 || endup[0] === 0)){
+      this.QueenMe(piece, endup);
+    }
+    debugger
+    if (piece.type === "King" && Math.abs(begin[1] - endup[1]) > 1){
+      this.castleMove(piece, begin, endup);
+    }
   };
 
   Array.prototype.includes = function(val){
